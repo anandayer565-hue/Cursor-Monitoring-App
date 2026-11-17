@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block content %}
+<section class="auth-panel">
+  <p class="eyebrow">Demo access</p>
+  <h1>Sign in</h1>
+  <p class="muted">Single demo account. Password is verified against a bcrypt hash.</p>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul class="flash-list">
+        {% for category, message in messages %}
+          <li class="flash flash-{{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <form method="post" action="{{ url_for('main.login', next=request.args.get('next')) }}" class="auth-form" novalidate>
+    {{ form.hidden_tag() }}
+    <label class="field">
+      <span>Username</span>
+      {{ form.username(autocomplete="username", class_="input") }}
+    </label>
+    <label class="field">
+      <span>Password</span>
+      {{ form.password(autocomplete="current-password", class_="input") }}
+    </label>
+    {{ form.submit(class_="btn btn-primary btn-block") }}
+  </form>
+</section>
+{% endblock %}

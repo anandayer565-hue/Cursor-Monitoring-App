@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">Linux · Local host</p>
+  <h1>Server metrics without the SSH hop</h1>
+  <p class="lede">
+    Internal L1–L3 demo: view CPU, memory, network, and more for this machine
+    in a read-only UI.
+  </p>
+  <div class="actions">
+    <a class="btn btn-primary" href="{{ url_for('main.servers') }}">View servers</a>
+  </div>
+</section>
+{% endblock %}

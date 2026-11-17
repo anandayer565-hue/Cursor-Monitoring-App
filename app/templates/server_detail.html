@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}{{ server_name }}{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel-head">
+    <div>
+      <p class="eyebrow">Read-only metrics</p>
+      <h1>{{ server_name }}</h1>
+      <p class="muted">ID: <code>{{ server_id }}</code> · Placeholder data until SSH collection is added</p>
+    </div>
+    <button type="button" class="btn btn-secondary" disabled title="Manual refresh arrives with SSH collection">
+      Refresh
+    </button>
+  </div>
+
+  <p class="notice">All metric views are read-only. This demo never changes host state from the UI.</p>
+
+  <div class="metric-grid">
+    <article class="metric-card">
+      <h2>CPU</h2>
+      <p class="metric-value">—</p>
+      <p class="muted">Usage %</p>
+    </article>
+    <article class="metric-card">
+      <h2>Memory</h2>
+      <p class="metric-value">—</p>
+      <p class="muted">Used / total</p>
+    </article>
+    <article class="metric-card">
+      <h2>Load average</h2>
+      <p class="metric-value">—</p>
+      <p class="muted">1 / 5 / 15 min</p>
+    </article>
+    <article class="metric-card">
+      <h2>Uptime</h2>
+      <p class="metric-value">—</p>
+      <p class="muted">Since boot</p>
+    </article>
+    <article class="metric-card">
+      <h2>Disk</h2>
+      <p class="metric-value">—</p>
+      <p class="muted">Usage %</p>
+    </article>
+    <article class="metric-card">
+      <h2>Network</h2>
+      <p class="metric-value">—</p>
+      <p class="muted">RX / TX</p>
+    </article>
+  </div>
+
+  <div class="split">
+    <article class="metric-card wide">
+      <h2>Listening ports</h2>
+      <p class="muted">Placeholder — port list will appear after SSH collector (Phase 4).</p>
+    </article>
+    <article class="metric-card wide">
+      <h2>Processes</h2>
+      <p class="muted">Placeholder — process list will appear after SSH collector (Phase 4).</p>
+    </article>
+  </div>
+
+  <p class="back"><a href="{{ url_for('main.servers') }}">← Back to servers</a></p>
+</section>
+{% endblock %}
