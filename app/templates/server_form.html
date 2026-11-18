@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Add server{% endblock %}
+{% block content %}
+<section class="auth-panel wide-form">
+  <p class="eyebrow">Local host only</p>
+  <h1>Add server</h1>
+  <p class="muted">Hostname must be <code>localhost</code>, <code>127.0.0.1</code>, or <code>::1</code>. Provide SSH password <em>or</em> key path.</p>
+
+  <form method="post" action="{{ url_for('main.servers_new') }}" class="auth-form" novalidate>
+    {{ form.hidden_tag() }}
+
+    <label class="field">
+      <span>Display name</span>
+      {{ form.display_name(class_="input", autocomplete="off") }}
+      {% for e in form.display_name.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+    </label>
+
+    <label class="field">
+      <span>Hostname / IP</span>
+      {{ form.hostname(class_="input", autocomplete="off") }}
+      {% for e in form.hostname.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+    </label>
+
+    <label class="field">
+      <span>SSH port</span>
+      {{ form.ssh_port(class_="input") }}
+      {% for e in form.ssh_port.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+    </label>
+
+    <label class="field">
+      <span>SSH username</span>
+      {{ form.ssh_username(class_="input", autocomplete="username") }}
+      {% for e in form.ssh_username.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+    </label>
+
+    <label class="field">
+      <span>SSH password (optional if key path set)</span>
+      {{ form.ssh_password(class_="input", autocomplete="new-password") }}
+      {% for e in form.ssh_password.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+    </label>
+
+    <label class="field">
+      <span>SSH key path (optional if password set)</span>
+      {{ form.ssh_key_path(class_="input", autocomplete="off", placeholder="~/.ssh/id_rsa") }}
+      {% for e in form.ssh_key_path.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+    </label>
+
+    {{ form.submit(class_="btn btn-primary btn-block") }}
+  </form>
+
+  <p class="back"><a href="{{ url_for('main.servers') }}">← Back to servers</a></p>
+</section>
+{% endblock %}

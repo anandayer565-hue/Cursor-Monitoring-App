@@ -368,3 +368,92 @@ code {
   color: #7a2e22;
   border: 1px solid #e2b8ae;
 }
+
+.flash-ok {
+  background: #e3f0e8;
+  color: #1d5c3a;
+  border: 1px solid #b5d4c2;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-left: 0.35rem;
+}
+
+.badge-warn {
+  background: #f3e0c7;
+  color: #7a4500;
+}
+
+.metric-card.is-warn {
+  border-color: #d4a15c;
+  background: #fff8ef;
+}
+
+.mono {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+
+.server-list a {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
+.server-name {
+  font-weight: 600;
+  min-width: 8rem;
+}
+
+.wide-form {
+  max-width: 28rem;
+}
+
+.field-error {
+  color: #7a2e22;
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.plain-list {
+  margin: 0.5rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+  max-height: 14rem;
+  overflow: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.data-table th,
+.data-table td {
+  text-align: left;
+  padding: 0.35rem 0.4rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.data-table th {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.metric-value.small {
+  font-size: 0.95rem;
+}
+
+.chart-card {
+  margin-top: 0.75rem;
+}
