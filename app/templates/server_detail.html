@@ -1,63 +1,114 @@
 {% extends "base.html" %}
-{% block title %}{{ server_name }}{% endblock %}
+{% block title %}{{ server.display_name }}{% endblock %}
 {% block content %}
 <section class="panel">
   <div class="panel-head">
     <div>
       <p class="eyebrow">Read-only metrics</p>
-      <h1>{{ server_name }}</h1>
-      <p class="muted">ID: <code>{{ server_id }}</code> · Placeholder data until SSH collection is added</p>
+      <h1>{{ server.display_name }}</h1>
+      <p class="muted mono">{{ server.hostname }}:{{ server.ssh_port }} · {{ server.ssh_username }}</p>
     </div>
-    <button type="button" class="btn btn-secondary" disabled title="Manual refresh arrives with SSH collection">
-      Refresh
-    </button>
+    <form method="post" action="{{ url_for('main.server_detail', server_id=server.id) }}">
+      {{ refresh_form.hidden_tag() }}
+      {{ refresh_form.submit(class_="btn btn-primary") }}
+    </form>
   </div>
 
-  <p class="notice">All metric views are read-only. This demo never changes host state from the UI.</p>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul class="flash-list">
+        {% for category, message in messages %}
+          <li class="flash flash-{{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <p class="notice">All metric views are read-only. Manual refresh only · history kept {{ retention_minutes }} minutes · SSH output is escaped by the template engine.</p>
+
+  {% if not metrics %}
+  <div class="empty">
+    <p>No samples yet.</p>
+    <p class="muted">Click Refresh to collect metrics over SSH.</p>
+  </div>
+  {% else %}
+  {% if metrics.error %}
+  <p class="flash flash-error">{{ metrics.error }}</p>
+  {% endif %}
+  <p class="muted">Last collected: <code>{{ metrics._collected_at }}</code></p>
 
   <div class="metric-grid">
-    <article class="metric-card">
-      <h2>CPU</h2>
-      <p class="metric-value">—</p>
-      <p class="muted">Usage %</p>
+    <article class="metric-card {% if warnings.cpu %}is-warn{% endif %}">
+      <h2>CPU {% if warnings.cpu %}<span class="badge badge-warn">≥80%</span>{% endif %}</h2>
+      <p class="metric-value">{% if metrics.cpu_percent is not none %}{{ '%.1f'|format(metrics.cpu_percent) }}%{% else %}—{% endif %}</p>
     </article>
-    <article class="metric-card">
-      <h2>Memory</h2>
-      <p class="metric-value">—</p>
-      <p class="muted">Used / total</p>
+    <article class="metric-card {% if warnings.memory %}is-warn{% endif %}">
+      <h2>Memory {% if warnings.memory %}<span class="badge badge-warn">≥85%</span>{% endif %}</h2>
+      <p class="metric-value">{% if metrics.memory %}{{ '%.1f'|format(metrics.memory.percent) }}%{% else %}—{% endif %}</p>
+      <p class="muted">{% if metrics.memory %}{{ metrics.memory.used_kb|int }} / {{ metrics.memory.total_kb|int }} KB{% endif %}</p>
     </article>
-    <article class="metric-card">
-      <h2>Load average</h2>
-      <p class="metric-value">—</p>
-      <p class="muted">1 / 5 / 15 min</p>
+    <article class="metric-card {% if warnings.load %}is-warn{% endif %}">
+      <h2>Load average {% if warnings.load %}<span class="badge badge-warn">high</span>{% endif %}</h2>
+      <p class="metric-value">{% if metrics.load %}{{ '%.2f'|format(metrics.load['1m']) }}{% else %}—{% endif %}</p>
+      <p class="muted">{% if metrics.load %}{{ '%.2f'|format(metrics.load['5m']) }} / {{ '%.2f'|format(metrics.load['15m']) }} · {{ metrics.cpu_count }} CPUs{% endif %}</p>
     </article>
     <article class="metric-card">
       <h2>Uptime</h2>
-      <p class="metric-value">—</p>
-      <p class="muted">Since boot</p>
+      <p class="metric-value">{% if metrics.uptime_seconds is not none %}{{ metrics.uptime_seconds }}s{% else %}—{% endif %}</p>
     </article>
-    <article class="metric-card">
-      <h2>Disk</h2>
-      <p class="metric-value">—</p>
-      <p class="muted">Usage %</p>
+    <article class="metric-card {% if warnings.disk %}is-warn{% endif %}">
+      <h2>Disk {% if warnings.disk %}<span class="badge badge-warn">≥90%</span>{% endif %}</h2>
+      <p class="metric-value">{% if metrics.disk %}{{ '%.1f'|format(metrics.disk.percent) }}%{% else %}—{% endif %}</p>
     </article>
     <article class="metric-card">
       <h2>Network</h2>
-      <p class="metric-value">—</p>
-      <p class="muted">RX / TX</p>
+      <p class="metric-value small">{% if metrics.network %}RX {{ metrics.network.rx_bytes }} / TX {{ metrics.network.tx_bytes }}{% else %}—{% endif %}</p>
+      <p class="muted">Bytes (counters)</p>
     </article>
   </div>
 
   <div class="split">
     <article class="metric-card wide">
       <h2>Listening ports</h2>
-      <p class="muted">Placeholder — port list will appear after SSH collector (Phase 4).</p>
+      {% if metrics.ports %}
+      <ul class="plain-list mono">
+        {% for line in metrics.ports %}
+        <li>{{ line }}</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="muted">No port data.</p>
+      {% endif %}
     </article>
     <article class="metric-card wide">
       <h2>Processes</h2>
-      <p class="muted">Placeholder — process list will appear after SSH collector (Phase 4).</p>
+      {% if metrics.processes %}
+      <table class="data-table">
+        <thead><tr><th>PID</th><th>User</th><th>CPU</th><th>MEM</th><th>Command</th></tr></thead>
+        <tbody>
+        {% for p in metrics.processes %}
+          <tr>
+            <td>{{ p.pid }}</td>
+            <td>{{ p.user }}</td>
+            <td>{{ p.cpu }}</td>
+            <td>{{ p.mem }}</td>
+            <td class="mono">{{ p.command }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="muted">No process data.</p>
+      {% endif %}
     </article>
   </div>
+
+  <article class="metric-card wide chart-card">
+    <h2>History (last {{ retention_minutes }} min)</h2>
+    <canvas id="history-chart" height="120" aria-label="CPU memory disk history"></canvas>
+    <script id="history-data" type="application/json">{{ chart_json|safe }}</script>
+  </article>
+  {% endif %}
 
   <p class="back"><a href="{{ url_for('main.servers') }}">← Back to servers</a></p>
 </section>

@@ -7,23 +7,35 @@
       <h1>Servers</h1>
       <p class="muted">Localhost Linux hosts registered for monitoring.</p>
     </div>
-    <a class="btn btn-secondary" href="{{ url_for('main.server_detail', server_id='stub') }}" title="Add form comes in a later step">
-      Add server
-    </a>
+    <a class="btn btn-primary" href="{{ url_for('main.servers_new') }}">Add server</a>
   </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul class="flash-list">
+        {% for category, message in messages %}
+          <li class="flash flash-{{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
 
   {% if servers %}
   <ul class="server-list">
     {% for s in servers %}
     <li>
-      <a href="{{ url_for('main.server_detail', server_id=s.id) }}">{{ s.name }}</a>
+      <a href="{{ url_for('main.server_detail', server_id=s.id) }}">
+        <span class="server-name">{{ s.display_name }}</span>
+        <span class="muted mono">{{ s.hostname }}:{{ s.ssh_port }} · {{ s.ssh_username }} · {{ s.auth_method }}</span>
+        {% if s.warning %}<span class="badge badge-warn">Warning</span>{% endif %}
+      </a>
     </li>
     {% endfor %}
   </ul>
   {% else %}
   <div class="empty">
     <p>No servers yet.</p>
-    <p class="muted">Use Add server once registration is wired (Phase 3). For now, open the stub detail page.</p>
+    <p class="muted">Add this machine as <code>127.0.0.1</code> or <code>localhost</code> (demo allows local host only).</p>
   </div>
   {% endif %}
 </section>

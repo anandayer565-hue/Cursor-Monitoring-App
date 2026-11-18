@@ -8,6 +8,8 @@ from pathlib import Path
 from flask import Flask
 from flask_wtf import CSRFProtect
 
+from app.db import HISTORY_RETENTION_MINUTES
+
 csrf = CSRFProtect()
 
 
@@ -19,11 +21,18 @@ def create_app(test_config: dict | None = None) -> Flask:
         instance_relative_config=True,
     )
 
-    # Prefer env; fallback is for local demo only (not production-safe).
-    default_db = Path(app.instance_path) / "monitor.db"
+    # Prefer env; fallbacks are for local demo only (not production-safe).
+    default_db = Path(
+        os.environ.get("DATABASE_PATH", Path(app.instance_path) / "monitor.db")
+    )
+    retention = int(
+        os.environ.get("HISTORY_RETENTION_MINUTES", HISTORY_RETENTION_MINUTES)
+    )
+
     app.config.from_mapping(
         SECRET_KEY=os.environ.get("SECRET_KEY", "dev-only-change-me-local-demo"),
         DATABASE=str(default_db),
+        HISTORY_RETENTION_MINUTES=retention,
         WTF_CSRF_ENABLED=True,
     )
 
@@ -31,7 +40,6 @@ def create_app(test_config: dict | None = None) -> Flask:
         app.config.update(test_config)
 
     Path(app.instance_path).mkdir(parents=True, exist_ok=True)
-    # Ensure DB parent exists when DATABASE is overridden (e.g. tests).
     Path(app.config["DATABASE"]).parent.mkdir(parents=True, exist_ok=True)
 
     csrf.init_app(app)

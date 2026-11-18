@@ -104,14 +104,14 @@ On manual refresh, collect and show:
 
 ## 9. Acceptance criteria (demo)
 
-- [ ] Login works with `admin` / `admin`; password is hashed at rest
-- [ ] Can add a local Linux server with the fields in §7.2
-- [ ] Server list links to a detail page
-- [ ] Detail page shows all metrics in §7.3 after manual refresh
-- [ ] History charts show recent samples (15–60 min window)
-- [ ] Threshold crossings show a clear visual warning
-- [ ] Metrics views do not allow mutating host state
-- [ ] App runs as a single local Flask process with SQLite
+- [x] Login works with `admin` / `admin`; password is hashed at rest
+- [x] Can add a local Linux server with the fields in §7.2
+- [x] Server list links to a detail page
+- [x] Detail page shows all metrics in §7.3 after manual refresh
+- [x] History charts show recent samples (15–60 min window)
+- [x] Threshold crossings show a clear visual warning
+- [x] Metrics views do not allow mutating host state
+- [x] App runs as a single local Flask process with SQLite
 
 ## 10. Non-goals reminder
 
